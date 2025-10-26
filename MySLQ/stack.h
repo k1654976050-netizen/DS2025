@@ -3,6 +3,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <string.h>
+#include <cmath>
 
 typedef enum
 {
@@ -102,21 +103,59 @@ const char pri[N_OPTR][N_OPTR] =
         // -- \0
         '<', '<', '<', '<', '<', '<', '<', ' ', '='};
 
+float calcu(char s, float f1)
+{
+    if (s != '!')
+        exit(-1); // 或者返回错误值
+    if (f1 == 0 || f1 == 1)
+        return 1;
+    float sum = 1;
+    for (int i = 1; i <= f1; i++)
+    {
+        sum *= i;
+    }
+    return sum;
+}
+
+float calcu(float f1, char s, float f2)
+{
+    if (s == '+')
+        return f1 + f2;
+    if (s == '-')
+        return f1 - f2;  // 修复：应该是f1-f2而不是f2-f1
+    if (s == '*')
+        return f1 * f2;
+    if (s == '/')
+        return f1 / f2;  // 修复：应该是f1/f2而不是f2/f1
+    if (s == '^')
+    {
+        return pow(f1, f2); // 修复：使用标准库函数计算幂
+    }
+    return 0;
+}
+
 void readNumber(char *&p, Stack<float> &stk)
 {
-    stk.push((float)(*p - '0'));
-    while (isdigit(*(++p)))
-    {
-        stk.push(stk.pop() * 10 + (*p - '0'));
-        if ('.' != *p)
-            return;
-        float fraction = 1;
-        while (isdigit(*(++p)))
-        {
-            stk.push(stk.pop() + (*p - '0') * (fraction /= 10));
+    float num = 0;
+    // 读取整数部分
+    while (isdigit(*p)) {
+        num = num * 10 + (*p - '0');
+        p++;
+    }
+    // 检查是否有小数部分
+    if (*p == '.') {
+        p++;
+        float fraction = 0.1;
+        // 读取小数部分
+        while (isdigit(*p)) {
+            num += (*p - '0') * fraction;
+            fraction *= 0.1;
+            p++;
         }
     }
+    stk.push(num);
 }
+
 void append(char *&rpn, float opnd)
 {
     int n = strlen(rpn);
@@ -124,7 +163,8 @@ void append(char *&rpn, float opnd)
     if (opnd != (float)(int)opnd)
         sprintf(buf, "%.2f ", opnd);
     else
-        rpn = (char *)realloc(rpn, sizeof(char) * (n + strlen(buf) + 1));
+        sprintf(buf, "%d ", (int)opnd);  // 修复：添加完整sprintf调用
+    rpn = (char *)realloc(rpn, sizeof(char) * (n + strlen(buf) + 1));  // 修复：移动realloc到正确位置
     strcat(rpn, buf);
 }
 
@@ -133,8 +173,9 @@ void append(char *&rpn, char optr)
     int n = strlen(rpn);
     rpn = (char *)realloc(rpn, sizeof(char) * (n + 3));
     sprintf(rpn + n, "%c ", optr);
-    rpn[n + 2] = '\0';
+    // rpn[n + 2] = '\0';  // 修复：sprintf已经添加了终止符，这行是多余的
 }
+
 Operator optr2rank(char op)
 {
     switch (op)
@@ -174,42 +215,6 @@ Operator optr2rank(char op)
 char orderBetween(char op1, char op2)
 {
     return pri[optr2rank(op1)][optr2rank(op2)];
-}
-
-float calcu(char s, float f1)
-{
-    if (s != '!')
-        exit(-1); // 或者返回错误值
-    if (f1 == 0 || f1 == 1)
-        return 1;
-    float sum = 1;
-    for (int i = 1; i <= f1; i++)
-    {
-        sum *= i;
-    }
-    return sum;
-}
-
-float calcu(float f1, char s, float f2)
-{
-    if (s == '+')
-        return f1 + f2;
-    if (s == '-')
-        return f2 - f1;
-    if (s == '*')
-        return f1 * f2;
-    if (s == '/')
-        return f2 / f1;
-    if (s == '^')
-    {
-        float temp = f1;
-        for (int i = 0; i < f2; i++)
-        {
-            f1 *= temp;
-        }
-        return f1;
-    }
-    return 0;
 }
 
 float evaluate(char *S, char *&RPN)

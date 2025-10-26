@@ -55,6 +55,7 @@ public:
     Rank insert(Rank r, T const &e);
     Rank insert(T const &e) { return insert(_size, e); }
     void sort(Rank lo, Rank hi);
+    void sort(Rank lo, Rank hi,int i);
     void sort() { sort(0, _size); }
     void unsort(Rank lo, Rank hi);
     void unsort() { unsort(0, _size); }
@@ -285,6 +286,7 @@ static Rank fibSearch(T *A, T const &e, Rank lo, Rank hi)
         }
         else return mi;
     }
+    return -1;
 }
 
 template <typename T>
@@ -312,6 +314,28 @@ void Vector<T>::sort(Rank lo, Rank hi)
         break;
     default:
         quickSort(lo, hi);
+        break;
+    }
+}
+template <typename T>
+void Vector<T>::sort(Rank lo, Rank hi,int i)
+{
+    switch (i)
+    {
+    case 1:
+        bubblesort(lo, hi);
+        break;
+    case 2:
+        // selectionSort(lo, hi);
+        break;
+    case 3:
+        mergeSort(lo, hi);
+        break;
+    case 4:
+        // heapSort(lo, hi);
+        break;
+    default:
+        // quickSort(lo, hi);
         break;
     }
 }
