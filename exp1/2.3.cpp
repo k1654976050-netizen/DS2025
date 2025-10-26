@@ -3,7 +3,7 @@
 #include <cstring>
 #include <cctype>
 #include <cmath>
-#include "../MySLQ/stack.h"
+#include "stack.h"
 
 using namespace std;
 

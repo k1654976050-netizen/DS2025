@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>
-#include "../MySLQ/stack.h"
+#include "stack.h"
 
 using namespace std;
 

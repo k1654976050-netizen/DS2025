@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../MySLQ/vector.h"
+#include "vector.h"
 #include <stack>
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "../MySLQ/stack.h"
+#include "stack.h"
 #include <iostream>
 using namespace std;
 

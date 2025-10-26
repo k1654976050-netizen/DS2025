@@ -1,4 +1,4 @@
-#include "../MySLQ/vector.h"  
+#include "vector.h"  
 #include <iostream>
 #include <cmath>
 #include <ctime>
